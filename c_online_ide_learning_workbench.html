@@ -1,4 +1,4 @@
-cat > c_online_ide_learning_workbench.html <<'EOF'
+
 <!DOCTYPE html>
 <html lang="zh-TW" class="h-full bg-slate-950 text-slate-100">
 
@@ -904,8 +904,7 @@ async function getUser() {
     const {
         data,
         error
-    } =
-        await db.auth.getSession();
+    } = await db.auth.getSession();
 
 
     if (error) {
@@ -918,7 +917,27 @@ async function getUser() {
     }
 
 
-    return data.session.user;
+    const user =
+        data.session.user;
+
+
+    /*
+        舊匿名登入 session
+        直接登出
+    */
+
+    if (
+        user.is_anonymous === true ||
+        !user.email
+    ) {
+
+        await db.auth.signOut();
+
+        return null;
+    }
+
+
+    return user;
 }
 
 
@@ -3361,4 +3380,3 @@ function toast(message) {
 
 </body>
 </html>
-EOF
